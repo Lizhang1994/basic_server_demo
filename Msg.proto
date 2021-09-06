@@ -1,0 +1,72 @@
+syntax = "proto3";
+package pb;
+option csharp_namespace = "Pb";
+
+//synchro player ID
+message SyncPid{
+int32 Pid = 1;
+string Username = 2;
+}
+
+//synchro player
+message Player{
+int32 Pid = 1;
+Position P = 2;
+string Username = 3;
+}
+
+//synchro surrounding player
+message SyncPlayers{
+repeated Player ps = 1;
+}
+
+//player position
+message Position{
+float X = 1;
+float Y = 2;
+float Z = 3;
+float V = 4;
+int32 BloodValue = 5;
+}
+
+//velocity vector
+message Velocity{
+float X = 1;
+float Y = 2;
+float Z = 3;
+}
+
+//broadcast message
+message BroadCast{
+int32 Pid = 1;
+int32 Tp = 2;
+
+oneof Data{
+string Content = 3;
+Position P = 4;
+int32 ActionData = 5;
+}
+string Username = 6;
+}
+
+//talk message
+message Talk{
+string Content = 1;
+}
+
+//change world require
+message ChangeWorldRequest{
+int32 Pid = 1;
+int32 Srcld = 2;
+int32 Targetld = 3;
+}
+
+//change world response
+message ChangeWorldResponse{
+int32 Pid = 1;
+int32 ChangeRes = 2;
+int32 Srcld = 3;
+int32 Targetld = 4;
+Position P = 5;
+}
+
