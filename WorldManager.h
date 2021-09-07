@@ -8,7 +8,7 @@ class WorldManager{
     private:
         WorldManager();
         ~WorldManager();
-        static WorldManger smManager;
+        static WorldManager smManager;
         std::vector<AOI_World*> mVecWorld;
     public:
         static WorldManager &GetInstance();

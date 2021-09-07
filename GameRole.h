@@ -25,8 +25,8 @@ class GameRole : public Irole, public AOI_Player{
         virtual bool Init() override; /* inherit from Irole   */
         virtual UserData *ProcMsg(UserData &_poUserData) override;
         virtual void Fini() override;
-        GameChannel *m_Channel = NULL;
-        GameProtocol *m_Protocol = NULL;
+        GameChannel *m_poChannel = NULL;
+        GameProtocol *m_poProtocol = NULL;
 
         virtual int GetX() override;  /* inherit from AOI_Player*/
         virtual int GetY() override;
@@ -39,7 +39,7 @@ class GameRole : public Irole, public AOI_Player{
         GameMsg *MakeSurPlays();  /* create surrounding players postion  */
         GameMsg *MakeChangeWorldResponse(int srcld, int targetld);
 
-        void ViewLost(std::list<AOI_Player *> &oldList, std::list<AOI_Player *> &newList); /* handle view lost  */
+        void ViewDisappear(std::list<AOI_Player *> &oldList, std::list<AOI_Player *> &newList); /* handle view lost  */
         void ViewAppear(std::list<AOI_Player *> &oldList, std::list<AOI_Player *> &newList); /* handle view appear  */
 
         void ProcNewPosition(float _x,float _y,float _z,float _v);

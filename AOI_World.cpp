@@ -2,8 +2,6 @@
 
 using namespace std;
 
-AOI_Grid::AOI_Grid(int _gid):iGID(_gid){}
-AOI_Grid::~AOI_Grid(){}
 
 int AOI_World::Xwidth(){return maxX - minX;}
 int AOI_World::Ywidth(){return maxY - minY;}
@@ -59,7 +57,7 @@ for(auto it : row_col){
 
     index = it.first * this->Xcnt + it.second;  /* count the grid number  */
 
-    for(auto pit : m_grids[index]->m_player){
+    for(auto pit : m_Grids[index]->m_players){
         retPlayers.push_back(pit);
     }
 
@@ -74,7 +72,7 @@ index = Calculate_Grid_Index(_player->GetX(), _player->GetY());
 if(index < 0 || index >= this->Xcnt * this->Ycnt){
 return; /* if grid is illegal,return  */
 }
-m_grids[index]->m_player.push_back(_player);
+m_Grids[index]->m_players.push_back(_player);
 }
 
 void AOI_World::DelPlayer(AOI_Player *_player){
@@ -84,7 +82,7 @@ index = Calculate_Grid_Index(_player->GetX(), _player->GetY());
 if(index < 0 || index >= this->Xcnt * this->Ycnt){
 return; /* if grid is illegal,return  */
 }
-m_grids[index]->m_player.remove(_player);
+m_Grids[index]->m_players.remove(_player);
 }
 
 bool AOI_World::GridChanged(AOI_Player *_player, int _newX,int _newY){
@@ -92,6 +90,10 @@ int oldindex = 0, newindex = 0;
 oldindex = Calculate_Grid_Index(_player->GetX(), _player->GetY());
 newindex = Calculate_Grid_Index(_newX, _newY);
 return oldindex != newindex;
+}
+
+AOI_World* AOI_World::GetWorld(){
+return this;
 }
 
 int AOI_World::Calculate_Grid_Index(int x, int y){

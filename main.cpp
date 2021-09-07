@@ -27,7 +27,7 @@ virtual int GetTimerSec() override{
 return 60; /*  timer is 60s. */
 }
 
-}
+};
 
 void Daemon(){  /* daemon program  */
 int ret = -1, status = 0;

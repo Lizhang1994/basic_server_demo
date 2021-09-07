@@ -2,7 +2,7 @@
 #include "GameRole.h"
 #include "GameProtocol.h"
 #include "GameMsg.h"
-#include "msg.pb.h"
+#include "Msg.pb.h"
 
 using namespace std;
 
@@ -21,14 +21,14 @@ m_poGameMsg = _poGameMsg;
 
 GameSingleTLV::GameSingleTLV(GameMsgType _Type, std::string _szInputData){
 m_MsgType = _Type;
-switch (_Tpye){
+switch (_Type){
     case GAME_MSG_LOGON_SYNCPID:
         m_poGameMsg = new pb::SyncPid();
         break;
     case GAME_MSG_TALK_CONTENT:
         m_poGameMsg = new pb::Talk();
         break;
-    case GAME_MSG_NEW_POSTION:
+    case GAME_MSG_NEW_POSITION:
         m_poGameMsg = new pb::Position();
         break;
     case GAME_MSG_BROADCAST:
@@ -39,6 +39,9 @@ switch (_Tpye){
         break;
     case GAME_MSG_SUR_PLAYER:
         m_poGameMsg = new pb::SyncPlayers();
+        break;
+    case GAME_MSG_CHANGE_WORLD:
+        m_poGameMsg = new pb::ChangeWorldRequest();
         break;
     default:
         break;

@@ -26,28 +26,28 @@ GameRole::~GameRole(){}
 
 bool GameRole::Init(){
 auto *pMsg = MakeLogonSyncPid(); /* new client connect,send ID and name to client  */
-ZinxKernel::Zinx_Sendout(*pMsg,*mProtocol); /* send message to protocol layer */
+ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol); /* send message to protocol layer */
 
 pMsg = MakeInitPosBroadcast(); /* send birth place message  to client*/
-ZinxKernel::Zinx_SendOut(*pMsg, *mProtocol); /* send message to protocol layer  */
+ZinxKernel::Zinx_SendOut(*pMsg, *m_poProtocol); /* send message to protocol layer  */
 
 mCurrentWorld = WorldManager::GetInstance().GetWorld(1); /* get first world  */
 
-AOI_Player::GetWorld()->AddPlayer(this);
+AOI_World::GetWorld()->AddPlayer(this);
 mCurrentWorld->AddPlayer(this);  /* add current player in this world  */
 
 auto players = ZinxKernel::Zinx_GetAllRole(); /* send new player's position to all players  */
 pMsg = MakeSurPlays();
-ZinxKernel::Zinx_SendOut(*pMsg,*mProtocol); /* send all players' position to new player  */
+ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol); /* send all players' position to new player  */
 
-auto players = mCurrentWOrld->GetSurPlayers(this); /* send position to surrounding players  */
+players = mCurrentWorld->GetSurPlayers(this); /* send position to surrounding players  */
 for(auto r : players){
     if(this == r){
         continue;
     }
     auto role = dynamic_cast<GameRole*>(r);
     pMsg = MakeInitPosBroadcast();
-    ZinxKernel::Zinx_SendOut(*pMsg, *role->mProtocol);
+    ZinxKernel::Zinx_SendOut(*pMsg, *role->m_poProtocol);
 }
 
 return true;
@@ -55,7 +55,7 @@ return true;
 
 UserData* GameRole::ProcMsg(UserData &_poUserData){
 GameMsg &Msg = dynamic_cast<GameMsg&>(_poUserData);
-for(auto single : Msg.m_MsgList){
+for(auto single : Msg.m_GameMsgList){
     switch(single->m_MsgType){
         case GameSingleTLV::GAME_MSG_NEW_POSITION:  /* synchro player position  */
             {
@@ -72,7 +72,7 @@ for(auto single : Msg.m_MsgList){
         case GameSingleTLV::GAME_MSG_CHANGE_WORLD: /* change world message  */
             {
                 auto pbMsg = dynamic_cast<pb::ChangeWorldRequest*>(single->m_poGameMsg);
-                this->ProcChangeWorld(pbMsg->srcid(),pbMsg->targetid());
+                this->ProcChangeWorld(pbMsg->srcld(),pbMsg->targetld());
                 break;
             }
         default: 
@@ -90,7 +90,7 @@ for(auto it : players){
     }
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeLogoffSyncPid(); /* create logoff message  */
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol); /* send message to all players  */
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol); /* send message to all players  */
 }
 
 AOI_World::GetWorld()->DelPlayer(this);
@@ -102,7 +102,7 @@ pSyncPid->set_pid(this->mPlayerld);
 pSyncPid->set_username(this->mPlayerName);
 auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_LOGON_SYNCPID.pSyncPid); /* serialized objects  */
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -115,7 +115,7 @@ pMsg->set_content(_talkContent);
 
 auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -133,7 +133,7 @@ pos->set_bloodvalue(hp);
 
 auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 
 return retMsg;
 }
@@ -152,7 +152,7 @@ pos->set_bloodvalue(this->hp);
 
 auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -163,7 +163,7 @@ pPid->set_username(this->mPlayerName);
 
 auto single = new GameSingleTLV(GameSingleTLV::GAME_LOGOFF_SYNCPID,pPid);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -189,7 +189,7 @@ for(auto it : players){
 }
 auto single = new GameSingleTLV(GameSingleTLV::GAME_SUR_PLAYER,pPlayer);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -197,8 +197,8 @@ GameMsg* GameRole::MakeChangeWorldResponse(int srcld, int targetld){  /* change 
 auto pMsg = new ChangeWorldResponse;
 pMsg->set_pid(this->mPlayerld);
 pMsg->set_changeres(1);
-pMsg->set_srcid(srcld);
-pMsg->set_targetid(targetld);
+pMsg->set_srcld(srcld);
+pMsg->set_targetld(targetld);
 
 auto pos = pMsg->mutable_p();
 pos->set_x(this->x);
@@ -209,7 +209,7 @@ pos->set_bloodvalue(this->hp);
 
 auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_CHANGE_WORLD_RESPONSE,pMsg);
 auto *retMsg = new GameMsg;
-retMsg->m_MsgList.push_back(single);
+retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
@@ -239,7 +239,7 @@ for(auto it : players){
     }
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeNewPosBroadcast();
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol);
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol);
 }
 }
 
@@ -248,7 +248,7 @@ auto players = ZinxKernel::Zinx_GetAllRole();  /* send talk message to everyone 
 for(auto it : players){
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeTalkBroadcast(content);
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol);
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol);
 }
 }
 
@@ -261,7 +261,7 @@ for(auto it : players){
     }
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeLogoffSyncPid();
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol);
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol);
 }
 if(1 == targetld){
     x = 100 + g_random_engine() % 20;
@@ -287,13 +287,13 @@ for(auto it : players){
     }
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeInitPosBroadcast();
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol);
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol);
 }
 
 auto pMsg = MakeChangeWorldResponse(srcld,targetld);
-ZinxKernel::Zinx_SendOut(*pMsg,*mProtocol);
+ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol);
 pMsg = MakeSurPlays();
-ZinxKernel::Zinx_SendOut(*pMsg,*mProtocol);
+ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol);
 }
 
 void GameRole::ViewDisappear(std::list<AOI_Player*>& oldList,std::list<AOI_Player*>& newList){
@@ -306,9 +306,9 @@ std::set_difference(oldVec.begin(),oldVec.end(),newVec.begin(),newVec.end(),std:
 for(auto it : dif){
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeLogoffSyncPid();
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol); /* send logoff player message to other player  */
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol); /* send logoff player message to other player  */
     pMsg = role->MakeLogoffSyncPid();
-    ZinxKernel::Zinx_SendOut(*pMsg,*mProtocol); /* send logoff player message to oneself  */
+    ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol); /* send logoff player message to oneself  */
 }
 
 }
@@ -323,9 +323,9 @@ std::set_difference(oldVec.begin(),oldVec.end(),newVec.begin(),newVec.end(),std:
 for(auto it : dif){
     auto role = dynamic_cast<GameRole*>(it);
     auto pMsg = MakeInitPosBroadcast();
-    ZinxKernel::Zinx_SendOut(*pMsg,*role->mProtocol); /* send logon player message to other player  */
+    ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol); /* send logon player message to other player  */
     pMsg = role->MakeInitPosBroadcast();
-    ZinxKernel::Zinx_SendOut(*pMsg,*mProtocol); /* send logon player message to oneself  */
+    ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol); /* send logon player message to oneself  */
 }
 }
 

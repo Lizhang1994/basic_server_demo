@@ -17,8 +17,8 @@ class GameProtocol : public Iprotocol{
         virtual std::string *response2raw(UserData & _oUserData) override;
         virtual Irole * GetMsgProcessor(UserDataMsg &_oUserDataMsg) override;
         virtual Ichannel * GetMsgSender(BytesMsg &_oBytes) override;
-        GameCHannel *m_BoundChannel = NULL;
-        GameRole *m_BoundRole = NULL;
+        GameChannel *m_poChannel = NULL;
+        GameRole *m_poRole = NULL;
 
 };
 

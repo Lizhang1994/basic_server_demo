@@ -26,7 +26,7 @@ class AOI_World{
         int m_Worldld = 1;
         int minX = 0, maxX = 0, minY = 0, maxY = 0, Xcnt = 0, Ycnt = 0;
         std::vector<AOI_Grid *> m_Grids; /* save grids in one world  */
-        sta::list<AOI_Player *> GetSurPlayers(AOI_Player *_player); /* save surrounding players  */
+        std::list<AOI_Player *> GetSurPlayers(AOI_Player *_player); /* save surrounding players  */
         AOI_World(int _minx, int _maxx,int _miny, int _maxy, int _xcnt, int _ycnt);
         void AddPlayer(AOI_Player *_player);
         void DelPlayer(AOI_Player *_player);
@@ -37,7 +37,7 @@ class AOI_World{
 //        static AOI_World *GetWorld();
 
         bool GridChanged(AOI_Player *_player, int _newX, int _newY); /* judge grid changes  */
-
+        AOI_World* GetWorld();
         virtual ~AOI_World();
 
 };

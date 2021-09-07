@@ -4,7 +4,10 @@
 #include "GameMsg.h"
 using namespace std;
 
-GameProtocol::GameProtocol(){}
+GameProtocol::GameProtocol(){
+GameMsg *poMsg = nullptr;
+std::string *retBuf = nullptr;
+}
 GameProtocol::~GameProtocol(){
 if(poMsg != nullptr){
 delete poMsg;
@@ -16,7 +19,7 @@ delete retBuf;
 
 /* return GameMsg after translate TCP data stream  */
 UserData *GameProtocol::raw2request(std::string _szInput){ // based on Tag Length Value format
-GameMsg *poMsg = new GameMsg();
+poMsg = new GameMsg();
 m_szLastBuffer.append(_szInput); /* cacche the message received this time and combine with remaining message  */
 
 while(m_szLastBuffer.size() >= 8){ /* if size >= minimum massage length, recycle  */
@@ -39,8 +42,8 @@ return poMsg;
 }
 /* return the byte stream after message content encoding   */
 std::string *GameProtocol::response2raw(UserData &_oUserData){
-GameMsg *poMsg = dynamic_cast<GameMsg *>(&_oUserData);
-std::string *retBuf = new string;
+*poMsg = dynamic_cast<GameMsg *>(&_oUserData);
+retBuf = new string;
 for(auto it : poMsg->m_szLastBuffer){
     std::string buf = it->Serialize();
     int iType = it->m_MsgType; /* message type  */
@@ -63,9 +66,9 @@ return retBuf;
 
 /* return bound poChannel  */
 Ichannel *GameProtocol::GetMsgSender(BytesMsg &_oBytes){
-return m_BoundChannel;
+return m_poChannel;
 }
 /* return bound poRole  */
 Irole *GameProtocol::GetMsgProcessor(UserDataMsg &_oUserDataMsg){
-return m_BoundRole;
+return m_poRole;
 }

@@ -1,7 +1,7 @@
 #ifndef _ZINXTIMER_H_
 #define _ZINXTIMER_H_
 
-#include "Zinx.h"
+#include "zinx.h"
 
 class ZinxTimer : public Ichannel{
     private:
@@ -18,6 +18,6 @@ class ZinxTimer : public Ichannel{
         virtual std::string GetChannelInfo() override;
         virtual AZinxHandler *GetInputNextStage(BytesMsg &_oInput) override;
 
-}
+};
 
 #endif

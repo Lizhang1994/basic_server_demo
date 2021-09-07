@@ -37,9 +37,9 @@ return true;
 
 void ZinxTimerDeliver::UnRegisterProcObject(TimerOutProc &_Proc){
 for(auto &it : m_TimerWheel){
-    for(auto itt = Lbegin(); itt != Lend();){
+    for(auto itt = it.begin(); itt != it.end();){
         if(itt->pProc == &_Proc){
-            itt = Lerase(itt);
+            it.erase(itt);
         }else{
             itt++;
         }

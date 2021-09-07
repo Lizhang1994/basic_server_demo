@@ -6,10 +6,10 @@
 GameChannel::GameChannel(int _fd) : ZinxTcpData(_fd){}
 
 GameChannel::~GameChannel(){  /*Destruction while delete related Role and Protocol   */
-    ZinxKernel::Zinx_Del_Role(*m_poBoundRole);
-    ZinxKernel::Zinx_Del_Proto(*m_poBoundProto);
-    delete m_poBoundRole;
-    delete m_poBoundProtocol;
+    ZinxKernel::Zinx_Del_Role(*m_poRole);
+    ZinxKernel::Zinx_Del_Proto(*m_poProtocol);
+    delete m_poRole;
+    delete m_poProtocol;
 }
 
 AZinxHandler *GameChannel::GetInputNextStage(BytesMsg &_oInput){ /* return protocol object  */
@@ -21,14 +21,14 @@ auto poChannel = new GameChannel(_fd);
 auto poProtocol = new GameProtocol();
 auto poRole = new GameRole();
 
-poChannel->m_poBoundProto = poProtocol;
-poChannel->m_poBoundRole = poRole;
+poChannel->m_poProtocol = poProtocol;
+poChannel->m_poRole = poRole;
 
-poProtocol->m_poBoundChannel = poChannel;
-poProtocol->m_poBoundRole = poRole;
+poProtocol->m_poChannel = poChannel;
+poProtocol->m_poRole = poRole;
 
-poRole->m_poBoundChannel = poChannel;
-poRole->m_poBoundProtocol = poProtocol;
+poRole->m_poChannel = poChannel;
+poRole->m_poProtocol = poProtocol;
 
 ZinxKernel::Zinx_Add_Proto(*poProtocol);
 ZinxKernel::Zinx_Add_Role(*poRole);
