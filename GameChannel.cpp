@@ -13,10 +13,11 @@ GameChannel::~GameChannel(){  /*Destruction while delete related Role and Protoc
 }
 
 AZinxHandler *GameChannel::GetInputNextStage(BytesMsg &_oInput){ /* return protocol object  */
-return m_poBoundProto;
+return m_poProtocol;
 }
 
-ZinxTcpData *GameChannel::CreateTcpDataChannel(int _fd){  /* create TcpData type object,create protocol object and role object and bound with pochannel,add protocol object and role into Kernel */
+ZinxTcpData *GameChannelFac::CreateTcpDataChannel(int _fd){  
+/* create TcpData type object,create protocol object and role object and bound with pochannel,add protocol object and role into Kernel */
 auto poChannel = new GameChannel(_fd);
 auto poProtocol = new GameProtocol();
 auto poRole = new GameRole();

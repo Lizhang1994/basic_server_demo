@@ -32,26 +32,25 @@ std::list<AOI_Player*>retPlayers; /* list for surrounding players  */
 row = (_player->GetY() - this->minY) / ((this->maxY - this->minY) / this->Ycnt);/*  row number and column number  */
 col = (_player->GetX() - this->minX) / ((this->maxX - this->minX) / this->Xcnt);
 
-pair<int,int>row_col = {
-    make_pair(row - 1,col - 1),
-    make_pair(row - 1,col),
-    make_pair(row - 1,col + 1),
-    
-    make_pair(row,col - 1),
-    make_pair(row,col),
-    make_pair(row,col + 1),
-    
-    make_pair(row + 1,col - 1),
-    make_pair(row + 1,col),
-    make_pair(row + 1,col + 1),
-};
+std::map<int,int>row_col;
+row_col.insert(make_pair(row - 1,col - 1));
+row_col.insert(make_pair(row - 1,col));
+row_col.insert(make_pair(row - 1,col + 1));
+
+row_col.insert(make_pair(row,col - 1));
+row_col.insert(make_pair(row,col));
+row_col.insert(make_pair(row,col + 1));
+
+row_col.insert(make_pair(row + 1,col - 1));
+row_col.insert(make_pair(row + 1,col));
+row_col.insert(make_pair(row + 1,col + 1));
 
 for(auto it : row_col){
     if(it.first < 0 || it.first >= this->Ycnt){
     continue;  /* Is row legal  */
     }
 
-    if(it.sencond < 0 || it.second >= this->Xcnt){
+    if(it.second < 0 || it.second >= this->Xcnt){
     continue;  /* Is column legal  */
     }
 
@@ -92,9 +91,9 @@ newindex = Calculate_Grid_Index(_newX, _newY);
 return oldindex != newindex;
 }
 
-AOI_World* AOI_World::GetWorld(){
-return this;
-}
+//AOI_World* AOI_World::GetWorld(){
+//return this;
+//}
 
 int AOI_World::Calculate_Grid_Index(int x, int y){
 int row = 0, col = 0, index = 0;
@@ -109,4 +108,7 @@ return -1;
 index = row * this->Xcnt + col;
 return index;
 }
+
+AOI_Grid::AOI_Grid(int _gid):iGID(_gid){}
+AOI_Grid::~AOI_Grid(){}
 

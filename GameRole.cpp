@@ -33,15 +33,14 @@ ZinxKernel::Zinx_SendOut(*pMsg, *m_poProtocol); /* send message to protocol laye
 
 mCurrentWorld = WorldManager::GetInstance().GetWorld(1); /* get first world  */
 
-AOI_World::GetWorld()->AddPlayer(this);
 mCurrentWorld->AddPlayer(this);  /* add current player in this world  */
 
 auto players = ZinxKernel::Zinx_GetAllRole(); /* send new player's position to all players  */
 pMsg = MakeSurPlays();
 ZinxKernel::Zinx_SendOut(*pMsg,*m_poProtocol); /* send all players' position to new player  */
 
-players = mCurrentWorld->GetSurPlayers(this); /* send position to surrounding players  */
-for(auto r : players){
+auto surplayers = mCurrentWorld->GetSurPlayers(this); /* send position to surrounding players  */
+for(auto r : surplayers){
     if(this == r){
         continue;
     }
@@ -93,45 +92,45 @@ for(auto it : players){
     ZinxKernel::Zinx_SendOut(*pMsg,*role->m_poProtocol); /* send message to all players  */
 }
 
-AOI_World::GetWorld()->DelPlayer(this);
+mCurrentWorld->DelPlayer(this);  /* delete current player in this world  */
 }
 
 GameMsg* GameRole::MakeLogonSyncPid(){ /* create logon message about name and ID  */
-auto pSyncPid = new SyncPid;
+auto *pSyncPid = new SyncPid;
 pSyncPid->set_pid(this->mPlayerld);
 pSyncPid->set_username(this->mPlayerName);
-auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_LOGON_SYNCPID.pSyncPid); /* serialized objects  */
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_LOGON_SYNCPID,pSyncPid); /* serialized objects  */
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
 GameMsg* GameRole::MakeTalkBroadcast(std::string _talkContent){
-auto pMsg = new BroadCast;
+auto *pMsg = new BroadCast;
 pMsg->set_pid(this->mPlayerld);
 pMsg->set_username(this->mPlayerName);
 pMsg->set_tp(1);
 pMsg->set_content(_talkContent);
 
-auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
 GameMsg* GameRole::MakeInitPosBroadcast(){  /* broadcast birthplace  */
-auto pMsg = new BroadCast;
+auto *pMsg = new BroadCast;
 pMsg->set_pid(this->mPlayerld);
 pMsg->set_username(this->mPlayerName);
 pMsg->set_tp(2);
-auto pos = pMsg->mutable_p();
+auto *pos = pMsg->mutable_p();
 pos->set_x(x);
 pos->set_y(y);
 pos->set_z(z);
 pos->set_v(v);
 pos->set_bloodvalue(hp);
 
-auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 
@@ -139,36 +138,36 @@ return retMsg;
 }
 
 GameMsg* GameRole::MakeNewPosBroadcast(){  /* broadcast new position  */
-auto pMsg = new BroadCast;
+auto *pMsg = new BroadCast;
 pMsg->set_pid(this->mPlayerld);
 pMsg->set_username(this->mPlayerName);
 pMsg->set_tp(4);
-auto pos = pMsg->mutable_p();
+auto *pos = pMsg->mutable_p();
 pos->set_x(this->x);
 pos->set_y(this->y);
 pos->set_z(this->z);
 pos->set_v(this->v);
 pos->set_bloodvalue(this->hp);
 
-auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_BROADCAST,pMsg);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
 GameMsg* GameRole::MakeLogoffSyncPid(){  /* logoff message broadcast  */
-auto pPid = new SyncPid;
+auto *pPid = new SyncPid;
 pPid->set_pid(this->mPlayerld);
 pPid->set_username(this->mPlayerName);
 
-auto single = new GameSingleTLV(GameSingleTLV::GAME_LOGOFF_SYNCPID,pPid);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_LOGOFF_SYNCPID,pPid);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
 GameMsg* GameRole::MakeSurPlays(){  /* surrounding players broadcast  */
-auto pPlayer = new SyncPlayers;
+auto *pPlayer = new SyncPlayers;
 auto players = mCurrentWorld->GetSurPlayers(this);
 
 for(auto it : players){
@@ -180,34 +179,34 @@ for(auto it : players){
     p->set_pid(this->mPlayerld);
     p->set_username(this->mPlayerName);
 
-    auto pos = p->mutable_p();
+    auto *pos = p->mutable_p();
     pos->set_x(role->x);
     pos->set_y(role->y);
     pos->set_z(role->z);
     pos->set_v(role->v);
     pos->set_bloodvalue(role->hp);
 }
-auto single = new GameSingleTLV(GameSingleTLV::GAME_SUR_PLAYER,pPlayer);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_SUR_PLAYER,pPlayer);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;
 }
 
 GameMsg* GameRole::MakeChangeWorldResponse(int srcld, int targetld){  /* change world confirm message  */
-auto pMsg = new ChangeWorldResponse;
+auto *pMsg = new ChangeWorldResponse;
 pMsg->set_pid(this->mPlayerld);
 pMsg->set_changeres(1);
 pMsg->set_srcld(srcld);
 pMsg->set_targetld(targetld);
 
-auto pos = pMsg->mutable_p();
+auto *pos = pMsg->mutable_p();
 pos->set_x(this->x);
 pos->set_y(this->y);
 pos->set_z(this->z);
 pos->set_v(this->v);
 pos->set_bloodvalue(this->hp);
 
-auto single = new GameSingleTLV(GameSingleTLV::GAME_MSG_CHANGE_WORLD_RESPONSE,pMsg);
+auto *single = new GameSingleTLV(GameSingleTLV::GAME_MSG_CHANGE_WORLD,pMsg);
 auto *retMsg = new GameMsg;
 retMsg->m_GameMsgList.push_back(single);
 return retMsg;

@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include <map>
 
 class AOI_Player{
     public:
@@ -12,7 +13,7 @@ class AOI_Player{
 
 class AOI_Grid{
     public:
-        AOI_Grid(int _gid) : iGID(_gid){}
+        AOI_Grid(int _gid);
         ~AOI_Grid();
         std::list <AOI_Player *> m_players; /* save players belong to this grid  */
         int iGID = 0;
@@ -33,11 +34,8 @@ class AOI_World{
         
         int Calculate_Grid_Index(int x,int y);
 
-//        static AOI_World *pxWorld;
-//        static AOI_World *GetWorld();
-
         bool GridChanged(AOI_Player *_player, int _newX, int _newY); /* judge grid changes  */
-        AOI_World* GetWorld();
+//        AOI_World* GetWorld();
         virtual ~AOI_World();
 
 };

@@ -9,17 +9,17 @@ GameMsg *poMsg = nullptr;
 std::string *retBuf = nullptr;
 }
 GameProtocol::~GameProtocol(){
-if(poMsg != nullptr){
+/*if(poMsg != nullptr){
 delete poMsg;
 }
 if(retBuf != nullptr){
 delete retBuf;
-}
+}  */
 }
 
 /* return GameMsg after translate TCP data stream  */
 UserData *GameProtocol::raw2request(std::string _szInput){ // based on Tag Length Value format
-poMsg = new GameMsg();
+GameMsg *poMsg = new GameMsg();
 m_szLastBuffer.append(_szInput); /* cacche the message received this time and combine with remaining message  */
 
 while(m_szLastBuffer.size() >= 8){ /* if size >= minimum massage length, recycle  */
@@ -42,9 +42,9 @@ return poMsg;
 }
 /* return the byte stream after message content encoding   */
 std::string *GameProtocol::response2raw(UserData &_oUserData){
-*poMsg = dynamic_cast<GameMsg *>(&_oUserData);
-retBuf = new string;
-for(auto it : poMsg->m_szLastBuffer){
+GameMsg *poMsg = dynamic_cast<GameMsg *>(&_oUserData);
+std::string *retBuf = new string;
+for(auto it : poMsg->m_GameMsgList){
     std::string buf = it->Serialize();
     int iType = it->m_MsgType; /* message type  */
     int ilength = buf.size();  /* message length  */

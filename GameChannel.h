@@ -18,7 +18,6 @@ GameChannel(int _fd);
 virtual ~GameChannel();
 
 virtual AZinxHandler *GetInputNextStage(BytesMsg &_oInput) override;
-virtual ZinxTcpData *CreateTcpDataChannel(int _fd) override;
 GameProtocol *m_poProtocol = NULL;
 GameRole *m_poRole = NULL;
 };

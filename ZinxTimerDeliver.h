@@ -35,7 +35,7 @@ class ZinxTimerDeliver : public AZinxHandler{
         bool RegisterProcObject(TimerOutProc &_Proc); /* register a timer handle object  */
         void UnRegisterProcObject(TimerOutProc &_Proc); /* logoff a timer handle object  */
         
-        virtual IZinxMsg *InternalHandle(IZinxMsg &_oInput) override;
+        virtual IZinxMsg *InternelHandle(IZinxMsg &_oInput) override;
         virtual AZinxHandler *GetNextHandler(IZinxMsg &_oNextMsg) override;
 
 };

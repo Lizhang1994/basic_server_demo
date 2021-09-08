@@ -4,7 +4,7 @@
 using namespace std;
 #define ZINX_TIMER_WHEEL_SIZE 8
 
-ZinxTimerDeliver ZinxTimerDeliver::m_single;
+ZinxTimerDeliver ZinxTimerDeliver::m_Single;
 
 ZinxTimerDeliver::ZinxTimerDeliver(){
 m_TimerWheel.resize(ZINX_TIMER_WHEEL_SIZE);
@@ -47,7 +47,7 @@ for(auto &it : m_TimerWheel){
 }
 }
 
-IZinxMsg *ZinxTimerDeliver::InternalHandle(IZinxMsg &_oInput){
+IZinxMsg *ZinxTimerDeliver::InternelHandle(IZinxMsg &_oInput){
 uint64_t tmo = 0;
 list<WheelNode> registerList;
 
@@ -58,7 +58,7 @@ for(uint64_t i = 0; i < tmo; i++){
     for(auto it = m_TimerWheel[m_Cur_Index].begin(); it != m_TimerWheel[m_Cur_Index].end(); ){
         it->LastCount--;
         if(it->LastCount < 0){
-            it->pProc>Proc(); /* call timeout handle function  */
+            it->pProc->Proc(); /* call timeout handle function  */
             registerList.push_back(*it);  /* save task  */
             it = m_TimerWheel[m_Cur_Index].erase(it);
         }else{

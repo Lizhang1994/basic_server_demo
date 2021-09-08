@@ -17,13 +17,13 @@ using namespace std;
 using namespace pb;
 
 class TimeOut : public TimerOutProc{
-virtual void Proc() override{
+void Proc(){
 auto players = ZinxKernel::Zinx_GetAllRole();
 if(0 == players.size()){
     ZinxKernel::Zinx_Exit();  /* no player in game then exit  */
 }
 }
-virtual int GetTimerSec() override{
+int GetTimerSec(){
 return 60; /*  timer is 60s. */
 }
 
